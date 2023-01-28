@@ -79,7 +79,7 @@ class kqueue_owner final {
      * 
      * There is no guarantee of reusage of returned awaiter object
      * When it is awaited, and `req.udata` is null(0),
-     * the value is set to `coroutine_handle<void>`
+     * the value is set to `coro::coroutine_handle<void>`
      * 
      * @code
      * auto read_async(kqueue_owner& kq, uint64_t fd) -> frame_t {
@@ -94,7 +94,7 @@ class kqueue_owner final {
      * @endcode
      */
     [[nodiscard]] auto submit(kevent64_s& req) noexcept {
-        class awaiter final : public suspend_always {
+        class awaiter final : public std::experimental::suspend_always {
             kqueue_owner& kq;
             kevent64_s& req;
 
@@ -104,7 +104,7 @@ class kqueue_owner final {
             }
 
           public:
-            void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+            void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
                 if (req.udata == 0)
                     req.udata = reinterpret_cast<uint64_t>(coro.address());
                 return kq.change(req);

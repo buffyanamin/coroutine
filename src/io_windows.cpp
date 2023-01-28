@@ -112,7 +112,7 @@ auto send_to(uint64_t sd, const sockaddr_in& remote, io_buffer_t buffer,
 
 GSL_SUPPRESS(type .1)
 GSL_SUPPRESS(bounds .3)
-void io_send_to::suspend(coroutine_handle<void> t) noexcept(false) {
+void io_send_to::suspend(coro::coroutine_handle<void> t) noexcept(false) {
     task = t; // coroutine will be resumed in overlapped callback
 
     const auto sd = reinterpret_cast<SOCKET>(hEvent);
@@ -169,7 +169,7 @@ auto recv_from(uint64_t sd, sockaddr_in& remote, io_buffer_t buffer,
 
 GSL_SUPPRESS(type .1)
 GSL_SUPPRESS(bounds .3)
-void io_recv_from::suspend(coroutine_handle<void> t) noexcept(false) {
+void io_recv_from::suspend(coro::coroutine_handle<void> t) noexcept(false) {
     task = t; // coroutine will be resumed in overlapped callback
 
     const auto sd = reinterpret_cast<SOCKET>(hEvent);
@@ -210,7 +210,7 @@ auto send_stream(uint64_t sd, io_buffer_t buffer, uint32_t flag,
 
 GSL_SUPPRESS(type .1)
 GSL_SUPPRESS(bounds .3)
-void io_send::suspend(coroutine_handle<void> t) noexcept(false) {
+void io_send::suspend(coro::coroutine_handle<void> t) noexcept(false) {
     task = t; // coroutine will be resumed in overlapped callback
 
     const auto sd = reinterpret_cast<SOCKET>(hEvent);
@@ -247,7 +247,7 @@ auto recv_stream(uint64_t sd, io_buffer_t buffer, uint32_t flag,
 
 GSL_SUPPRESS(type .1)
 GSL_SUPPRESS(bounds .3)
-void io_recv::suspend(coroutine_handle<void> t) noexcept(false) {
+void io_recv::suspend(coro::coroutine_handle<void> t) noexcept(false) {
     task = t; // coroutine will be resumed in overlapped callback
 
     const auto sd = reinterpret_cast<SOCKET>(hEvent);

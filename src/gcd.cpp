@@ -20,7 +20,7 @@ void sink_exception(const spdlog::source_loc& loc, std::exception_ptr&& exp) noe
     }
 }
 
-void queue_awaitable_t::await_suspend(coroutine_handle<void> coro) noexcept {
+void queue_awaitable_t::await_suspend(coro::coroutine_handle<void> coro) noexcept {
     dispatch_async_f(queue, coro.address(), resume_once);
 }
 

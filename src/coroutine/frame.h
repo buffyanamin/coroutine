@@ -51,11 +51,11 @@ namespace std::experimental {
  * @note It needs to be a class template. We can't use `using`.
  * @code
  *  template <typename P>
- *  using coroutine_handle = std::coroutine_handle<P>;
+ *  using coro::coroutine_handle = std::experimental::coroutine_handle<P>;
  * @endcode
  */
 template <typename P>
-struct coroutine_handle : public std::coroutine_handle<P> {
+struct coro::coroutine_handle : public std::experimental::coroutine_handle<P> {
     // use inheritance for code reuse
 };
 
@@ -96,18 +96,18 @@ namespace std {
 
 // 17.12.3, coroutine handle
 template <typename _PromiseT = void>
-struct coroutine_handle;
+struct coro::coroutine_handle;
 
-// STRUCT TEMPLATE coroutine_handle
+// STRUCT TEMPLATE coro::coroutine_handle
 template <>
-struct coroutine_handle<void> {
+struct coro::coroutine_handle<void> {
     // 17.12.3.1, construct
-    constexpr coroutine_handle() noexcept {
+    constexpr coro::coroutine_handle() noexcept {
     }
     // 17.12.3.1, reset
-    constexpr coroutine_handle(std::nullptr_t) noexcept {
+    constexpr coro::coroutine_handle(std::nullptr_t) noexcept {
     }
-    coroutine_handle& operator=(nullptr_t) noexcept {
+    coro::coroutine_handle& operator=(nullptr_t) noexcept {
         _Ptr = nullptr;
         return *this;
     }
@@ -116,8 +116,8 @@ struct coroutine_handle<void> {
         return _Ptr;
     }
     // 17.12.3.2, import
-    static /*constexpr*/ coroutine_handle from_address(void* _Addr) {
-        coroutine_handle _Result{};
+    static /*constexpr*/ coro::coroutine_handle from_address(void* _Addr) {
+        coro::coroutine_handle _Result{};
         _Result._Ptr = reinterpret_cast<portable_coro_prefix*>(_Addr);
         return _Result;
     }
@@ -144,22 +144,22 @@ struct coroutine_handle<void> {
 };
 
 template <typename _PromiseT>
-struct coroutine_handle : public coroutine_handle<void> {
+struct coro::coroutine_handle : public coro::coroutine_handle<void> {
     // 17.12.3.1, construct
-    using coroutine_handle<void>::coroutine_handle;
+    using coro::coroutine_handle<void>::coro::coroutine_handle;
 
-    static coroutine_handle from_promise(_PromiseT& _Prom) {
+    static coro::coroutine_handle from_promise(_PromiseT& _Prom) {
         auto* _Addr = portable_coro_from_promise(&_Prom, sizeof(_PromiseT));
-        return coroutine_handle::from_address(_Addr);
+        return coro::coroutine_handle::from_address(_Addr);
     }
     // 17.12.3.1, reset
-    coroutine_handle& operator=(nullptr_t) noexcept {
+    coro::coroutine_handle& operator=(nullptr_t) noexcept {
         this->_Ptr = nullptr;
         return *this;
     }
     // 17.12.3.2, export/import
-    static /*constexpr*/ coroutine_handle from_address(void* _Addr) noexcept {
-        coroutine_handle _Result{};
+    static /*constexpr*/ coro::coroutine_handle from_address(void* _Addr) noexcept {
+        coro::coroutine_handle _Result{};
         _Result._Ptr = reinterpret_cast<portable_coro_prefix*>(_Addr);
         return _Result;
     }
@@ -174,34 +174,34 @@ struct coroutine_handle : public coroutine_handle<void> {
 };
 
 // 17.12.3.6, comparison operators
-constexpr bool operator==(const coroutine_handle<void> _Left,
-                          const coroutine_handle<void> _Right) noexcept {
+constexpr bool operator==(const coro::coroutine_handle<void> _Left,
+                          const coro::coroutine_handle<void> _Right) noexcept {
     return _Left.address() == _Right.address();
 }
 
 /// @todo apply standard spaceship operator
 /// ```
-/// constexpr strong_ordering operator<=>(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+/// constexpr strong_ordering operator<=>(coro::coroutine_handle<> x, coro::coroutine_handle<> y) noexcept;
 /// ```
 
-constexpr bool operator!=(const coroutine_handle<void> _Left,
-                          const coroutine_handle<void> _Right) noexcept {
+constexpr bool operator!=(const coro::coroutine_handle<void> _Left,
+                          const coro::coroutine_handle<void> _Right) noexcept {
     return !(_Left == _Right);
 }
-constexpr bool operator<(const coroutine_handle<void> _Left,
-                         const coroutine_handle<void> _Right) noexcept {
+constexpr bool operator<(const coro::coroutine_handle<void> _Left,
+                         const coro::coroutine_handle<void> _Right) noexcept {
     return _Left.address() < _Right.address();
 }
-constexpr bool operator>(const coroutine_handle<void> _Left,
-                         const coroutine_handle<void> _Right) noexcept {
+constexpr bool operator>(const coro::coroutine_handle<void> _Left,
+                         const coro::coroutine_handle<void> _Right) noexcept {
     return _Right < _Left;
 }
-constexpr bool operator<=(const coroutine_handle<void> _Left,
-                          const coroutine_handle<void> _Right) noexcept {
+constexpr bool operator<=(const coro::coroutine_handle<void> _Left,
+                          const coro::coroutine_handle<void> _Right) noexcept {
     return !(_Left > _Right);
 }
-constexpr bool operator>=(const coroutine_handle<void> _Left,
-                          const coroutine_handle<void> _Right) noexcept {
+constexpr bool operator>=(const coro::coroutine_handle<void> _Left,
+                          const coro::coroutine_handle<void> _Right) noexcept {
     return !(_Left < _Right);
 }
 
@@ -209,15 +209,15 @@ constexpr bool operator>=(const coroutine_handle<void> _Left,
 struct noop_coroutine_promise {};
 
 // STRUCT noop_coroutine_handle
-using noop_coroutine_handle = coroutine_handle<noop_coroutine_promise>;
+using noop_coroutine_handle = coro::coroutine_handle<noop_coroutine_promise>;
 
 // 17.12.4.3
 noop_coroutine_handle noop_coroutine() noexcept;
 
-// STRUCT coroutine_handle<noop_coroutine_promise>
+// STRUCT coro::coroutine_handle<noop_coroutine_promise>
 template <>
-struct coroutine_handle<noop_coroutine_promise>
-    : public coroutine_handle<void> {
+struct coro::coroutine_handle<noop_coroutine_promise>
+    : public coro::coroutine_handle<void> {
     // 17.12.4.2.1, observers
     constexpr explicit operator bool() const noexcept {
         return true;
@@ -246,8 +246,8 @@ struct coroutine_handle<noop_coroutine_promise>
     }
 
   private:
-    coroutine_handle() noexcept
-        : coroutine_handle<void>{from_address(__builtin_coro_noop())} {
+    coro::coroutine_handle() noexcept
+        : coro::coroutine_handle<void>{from_address(__builtin_coro_noop())} {
     }
 #else
 #error "requires higher clang version to use __builtin_coro_noop"
@@ -265,8 +265,8 @@ struct coroutine_handle<noop_coroutine_promise>
     }
 
   private:
-    coroutine_handle() noexcept
-        : coroutine_handle<void>{from_address(&this->promise())} {
+    coro::coroutine_handle() noexcept
+        : coro::coroutine_handle<void>{from_address(&this->promise())} {
         // A noop_coroutine_handle's ptr is always a non-null pointer
     }
 #endif
@@ -289,19 +289,19 @@ class suspend_never {
     }
     constexpr void await_resume() const noexcept {
     }
-    constexpr void await_suspend(coroutine_handle<void>) const noexcept {
+    constexpr void await_suspend(coro::coroutine_handle<void>) const noexcept {
     }
 };
 
-// STRUCT suspend_always
-class suspend_always {
+// STRUCT std::experimental::suspend_always
+class std::experimental::suspend_always {
   public:
     constexpr bool await_ready() const noexcept {
         return false;
     }
     constexpr void await_resume() const noexcept {
     }
-    constexpr void await_suspend(coroutine_handle<void>) const noexcept {
+    constexpr void await_suspend(coro::coroutine_handle<void>) const noexcept {
     }
 };
 
@@ -326,12 +326,12 @@ struct coroutine_traits : coro_traits_sfinae<_Ret> {};
 
 // clang: std::experimental::coroutine_handle must be a class template
 template <typename P>
-struct coroutine_handle : public std::coroutine_handle<P> {};
+struct coro::coroutine_handle : public std::experimental::coroutine_handle<P> {};
 
 #elif defined(_MSC_VER)
 
-// msvc: compatibility with existing `experimental::coroutine_handle` identifiers.
-using std::coroutine_handle;
+// msvc: compatibility with existing `experimental::coro::coroutine_handle` identifiers.
+using std::experimental::coroutine_handle;
 
 // _Resumable_helper_traits class isolates front-end from public surface naming changes
 // The original code is in <experimental/resumable>
@@ -339,7 +339,7 @@ template <typename _Ret, typename... _Ts>
 struct _Resumable_helper_traits {
     using _Traits = coroutine_traits<_Ret, _Ts...>;
     using _PromiseT = typename _Traits::promise_type;
-    using _Handle_type = coroutine_handle<_PromiseT>;
+    using _Handle_type = coro::coroutine_handle<_PromiseT>;
 
     static _PromiseT* _Promise_from_frame(void* _Addr) noexcept {
         auto& prom = _Handle_type::from_address(_Addr).promise();
@@ -379,9 +379,9 @@ using coroutine_traits = std::experimental::coroutine_traits<_Ret, _Param...>;
 
 // 17.12.3.7, hash support
 template <typename _PromiseT>
-struct hash<coroutine_handle<_PromiseT>> {
+struct hash<coro::coroutine_handle<_PromiseT>> {
     // deprecated in C++17
-    using argument_type = coroutine_handle<_PromiseT>;
+    using argument_type = coro::coroutine_handle<_PromiseT>;
     // deprecated in C++17
     using result_type = size_t;
 
@@ -403,14 +403,14 @@ namespace std
 struct noop_coroutine_promise {};
 
 // STRUCT noop_coroutine_handle
-using noop_coroutine_handle = coroutine_handle<noop_coroutine_promise>;
+using noop_coroutine_handle = coro::coroutine_handle<noop_coroutine_promise>;
 
 // 17.12.4.3
 noop_coroutine_handle noop_coroutine() noexcept;
 
-// STRUCT coroutine_handle<noop_coroutine_promise>
+// STRUCT coro::coroutine_handle<noop_coroutine_promise>
 template <>
-struct coroutine_handle<noop_coroutine_promise> : public coroutine_handle<void> {
+struct coro::coroutine_handle<noop_coroutine_promise> : public coro::coroutine_handle<void> {
     // 17.12.4.2.1, observers
     constexpr explicit operator bool() const noexcept {
         return true;

@@ -30,7 +30,7 @@ class enumerable {
     using pointer = value_type*;
 
   private:
-    coroutine_handle<promise_type> coro{};
+    coro::coroutine_handle<promise_type> coro{};
 
   public:
     enumerable(const enumerable&) = delete;
@@ -43,7 +43,7 @@ class enumerable {
         return *this;
     }
     enumerable() noexcept = default;
-    explicit enumerable(coroutine_handle<promise_type> rh) noexcept : coro{rh} {
+    explicit enumerable(coro::coroutine_handle<promise_type> rh) noexcept : coro{rh} {
     }
     /**
      * @brief   The type will destroy the frame in destructor
@@ -81,7 +81,7 @@ class enumerable {
          */
         enumerable get_return_object() noexcept {
             return enumerable{
-                coroutine_handle<promise_type>::from_promise(*this)};
+                coro::coroutine_handle<promise_type>::from_promise(*this)};
         }
         void unhandled_exception() noexcept(false) {
             throw;
@@ -89,7 +89,7 @@ class enumerable {
         /// @brief  `co_yield` expression. for reference
         auto yield_value(reference ref) noexcept {
             current = std::addressof(ref);
-            return suspend_always{};
+            return std::experimental::suspend_always{};
         }
         /// @brief  `co_yield` expression. for r-value
         auto yield_value(value_type&& v) noexcept {
@@ -114,14 +114,14 @@ class enumerable {
         using pointer = value_type*;
 
       public:
-        coroutine_handle<promise_type> coro;
+        coro::coroutine_handle<promise_type> coro;
 
       public:
         /// @see enumerable::end()
         explicit iterator(std::nullptr_t) noexcept : coro{nullptr} {
         }
         /// @see enumerable::begin()
-        explicit iterator(coroutine_handle<promise_type> handle) noexcept
+        explicit iterator(coro::coroutine_handle<promise_type> handle) noexcept
             : coro{handle} {
         }
 

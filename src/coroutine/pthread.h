@@ -31,7 +31,7 @@ class continue_on_pthread final {
      * @param coro 
      */
     static uint32_t spawn(pthread_t& tid, const pthread_attr_t* attr,
-                          coroutine_handle<void> coro) noexcept(false);
+                          coro::coroutine_handle<void> coro) noexcept(false);
     static void* on_pthread(void* ptr) noexcept(false);
 
   private:
@@ -44,7 +44,7 @@ class continue_on_pthread final {
     }
     void await_resume() noexcept {
     }
-    void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
         if (int ec = spawn(*ptr, attr, coro))
             throw std::system_error{ec, std::system_category(),
                                     "pthread_create"};
@@ -116,7 +116,7 @@ class pthread_joiner final {
     class promise_type final : public pthread_spawn_promise {
       public:
         constexpr auto final_suspend() noexcept {
-            return suspend_always{};
+            return std::experimental::suspend_always{};
         }
         auto get_return_object() noexcept {
             return pthread_joiner{this};

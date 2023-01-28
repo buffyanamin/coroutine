@@ -31,7 +31,7 @@ static_assert(is_copy_constructible_v<set_or_cancel> == false);
 GSL_SUPPRESS(con .4)
 void __stdcall wait_event_on_thread_pool(PVOID ctx, BOOLEAN timedout) {
     UNREFERENCED_PARAMETER(timedout);
-    auto coro = coroutine_handle<void>::from_address(ctx);
+    auto coro = coro::coroutine_handle<void>::from_address(ctx);
     assert(coro.done() == false);
     coro.resume();
 }
@@ -52,7 +52,7 @@ auto set_or_cancel::unregister() noexcept -> uint32_t {
     return ec;
 }
 
-void set_or_cancel::suspend(coroutine_handle<void> coro) noexcept(false) {
+void set_or_cancel::suspend(coro::coroutine_handle<void> coro) noexcept(false) {
     // since this point, wo becomes a handle for the request
     // this is one-shot event. so use infinite timeout
     if (RegisterWaitForSingleObject(addressof(hobject), hobject,
@@ -83,7 +83,7 @@ void set_or_cancel::suspend(coroutine_handle<void> coro) noexcept(false) {
 GSL_SUPPRESS(con .4)
 void continue_on_thread_pool::resume_on_thread_pool(PTP_CALLBACK_INSTANCE, //
                                                     PVOID ctx, PTP_WORK work) {
-    if (auto coro = coroutine_handle<void>::from_address(ctx))
+    if (auto coro = coro::coroutine_handle<void>::from_address(ctx))
         if (coro.done() == false)
             coro.resume();
 
@@ -91,7 +91,7 @@ void continue_on_thread_pool::resume_on_thread_pool(PTP_CALLBACK_INSTANCE, //
 }
 
 auto continue_on_thread_pool::create_and_submit_work(
-    coroutine_handle<void> coro) noexcept -> uint32_t {
+    coro::coroutine_handle<void> coro) noexcept -> uint32_t {
     // just make sure no data loss in `static_cast`
     static_assert(sizeof(uint32_t) == sizeof(DWORD));
 
@@ -107,12 +107,12 @@ auto continue_on_thread_pool::create_and_submit_work(
 GSL_SUPPRESS(type .1)
 void continue_on_apc::resume_on_apc(ULONG_PTR param) {
     auto ptr = reinterpret_cast<void*>(param);
-    if (auto coro = coroutine_handle<void>::from_address(ptr))
+    if (auto coro = coro::coroutine_handle<void>::from_address(ptr))
         coro.resume();
 }
 
 GSL_SUPPRESS(type .1)
-auto continue_on_apc::queue_user_apc(coroutine_handle<void> coro) noexcept
+auto continue_on_apc::queue_user_apc(coro::coroutine_handle<void> coro) noexcept
     -> uint32_t {
     const auto param = reinterpret_cast<ULONG_PTR>(coro.address());
 

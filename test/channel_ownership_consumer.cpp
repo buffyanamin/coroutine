@@ -6,6 +6,7 @@
 #include <cassert>
 
 #include <coroutine/channel.hpp>
+#include <iostream>
 #include <coroutine/return.h>
 
 using namespace std;
@@ -41,7 +42,8 @@ auto consumer_owner() -> no_return_t {
 
     // the type doesn't support for-co_await for now
     for (auto [msg, ok] = co_await ch.read(); ok;
-         tie(msg, ok) = co_await ch.read()) {
+        tie(msg, ok) = co_await ch.read()) {
+        std::cout << "msg " << msg << " received" << std::endl;
         // ok == true: we sent a value
         if (msg == bye) {
             puts("consumer loop exit");

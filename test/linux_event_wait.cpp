@@ -22,7 +22,7 @@ void resume_signaled_tasks(epoll_owner& ep) {
         return;
 
     for_each(events.begin(), events.begin() + count, [](epoll_event& e) {
-        auto coro = coroutine_handle<void>::from_address(e.data.ptr);
+        auto coro = coro::coroutine_handle<void>::from_address(e.data.ptr);
         coro.resume();
     });
 }

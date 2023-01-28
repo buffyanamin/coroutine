@@ -4,7 +4,13 @@
 	branch = v2.1.0
 [submodule "external/latch"]
 	path = external/latch
-	url = https://github.com/luncliff/latch
+	url = //github.com/luncliff/latch
 [submodule "external/sockets"]
 	path = external/sockets
+	url = https://github.com/luncliff/ssf
+[submodule "external/GSL"]
+	path = external/GSL
+	url = https://github.com/Microsoft/GSL
+[submodule "external/ssf"]
+	path = external/ssf
 	url = https://github.com/luncliff/ssf

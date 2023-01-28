@@ -8,6 +8,7 @@
 
 #include <coroutine/channel.hpp>
 #include <coroutine/return.h>
+#include <iostream>
 
 using namespace std;
 using namespace coro;
@@ -48,6 +49,7 @@ int main(int, char*[]) {
         read_from(ch, storage);
         // so no effect for the read
         assert(storage != i);
+        std::cout << "storage: " << storage << std::endl;
     }
     for (auto i : list) {
         // writer will send a value

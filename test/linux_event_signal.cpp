@@ -28,7 +28,7 @@ int main(int, char*[]) {
     if (count == 0)
         return __LINE__;
 
-    auto coro = coroutine_handle<void>::from_address(events[0].data.ptr);
+    auto coro = coro::coroutine_handle<void>::from_address(events[0].data.ptr);
     coro.resume();
     if (resumed == false)
         return __LINE__;

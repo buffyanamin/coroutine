@@ -12,8 +12,8 @@ using namespace std;
 using namespace coro;
 
 // see 'external/sockets'
-void socket_setup() noexcept(false);
-void socket_teardown() noexcept;
+void socket_setup() noexcept(false) {}
+void socket_teardown() noexcept {}
 
 array<sockaddr_in6, 1> addresses{};
 

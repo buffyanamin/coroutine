@@ -58,7 +58,7 @@ class set_or_cancel final {
      * 
      * @todo can we use `WT_EXECUTEINWAITTHREAD` for this type?
      */
-    void suspend(coroutine_handle<void>) noexcept(false);
+    void suspend(coro::coroutine_handle<void>) noexcept(false);
 
   public:
     /**
@@ -73,7 +73,7 @@ class set_or_cancel final {
     constexpr bool await_ready() const noexcept {
         return false;
     }
-    void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
         return suspend(coro);
     }
     uint32_t await_resume() noexcept {
@@ -100,7 +100,7 @@ class continue_on_thread_pool final {
      * @see CreateThreadpoolWork
      * @see SubmitThreadpoolWork
      */
-    uint32_t create_and_submit_work(coroutine_handle<void>) noexcept;
+    uint32_t create_and_submit_work(coro::coroutine_handle<void>) noexcept;
 
   public:
     constexpr bool await_ready() const noexcept {
@@ -115,7 +115,7 @@ class continue_on_thread_pool final {
      * @param coro
      * @throw system_error
      */
-    void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
         if (const auto ec = create_and_submit_work(coro))
             throw std::system_error{static_cast<int>(ec),
                                     std::system_category(),
@@ -137,7 +137,7 @@ class continue_on_apc final {
      * @see QueueUserAPC
      * @return uint32_t error code from `QueueUserAPC` function
      */
-    uint32_t queue_user_apc(coroutine_handle<void>) noexcept;
+    uint32_t queue_user_apc(coro::coroutine_handle<void>) noexcept;
 
   public:
     constexpr bool await_ready() const noexcept {
@@ -151,7 +151,7 @@ class continue_on_apc final {
      * @param coro
      * @throw system_error
      */
-    void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
         if (const auto ec = queue_user_apc(coro))
             throw std::system_error{static_cast<int>(ec),
                                     std::system_category(), "QueueUserAPC"};

@@ -8,16 +8,16 @@ using namespace std;
 
 void* continue_on_pthread::on_pthread(void* ptr) noexcept(false) {
     // assume we will receive an address of the coroutine frame
-    auto task = coroutine_handle<void>::from_address(ptr);
+    auto task = coro::coroutine_handle<void>::from_address(ptr);
     if (task.done() == false)
         task.resume();
 
-    return task.address(); // coroutine_handle<void>::address();
+    return task.address(); // coro::coroutine_handle<void>::address();
 }
 
 uint32_t
 continue_on_pthread::spawn(pthread_t& tid, const pthread_attr_t* attr,
-                           coroutine_handle<void> coro) noexcept(false) {
+                           coro::coroutine_handle<void> coro) noexcept(false) {
     return ::pthread_create(&tid, attr, on_pthread, coro.address());
 }
 
@@ -36,7 +36,7 @@ pthread_joiner::~pthread_joiner() noexcept(false) {
     if (auto ec = pthread_join(tid, &ptr)) {
         throw system_error{ec, system_category(), "pthread_join"};
     }
-    if (auto frame = coroutine_handle<void>::from_address(ptr)) {
+    if (auto frame = coro::coroutine_handle<void>::from_address(ptr)) {
         frame.destroy();
     }
 }

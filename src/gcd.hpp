@@ -21,12 +21,12 @@ namespace coro {
  *  because it's a compiler intrinsic. Create a simple function for the purpose.
  * 
  * @see dispatch_function_t
- * @param ptr argument for `coroutine_handle<void>::from_address`
+ * @param ptr argument for `coro::coroutine_handle<void>::from_address`
  */
 void resume_once(void* ptr) noexcept;
 
 /**
- * @brief Forward the `coroutine_handle`(job) to `dispatch_queue_t`
+ * @brief Forward the `coro::coroutine_handle`(job) to `dispatch_queue_t`
  * @see dispatch_async_f
  * @see https://developer.apple.com/library/archive/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationQueues/OperationQueues.html
  */
@@ -39,7 +39,7 @@ struct queue_awaitable_t final {
         return queue == nullptr;
     }
     /// @see dispatch_async_f
-    void await_suspend(coroutine_handle<void> coro) noexcept;
+    void await_suspend(coro::coroutine_handle<void> coro) noexcept;
 
     constexpr void await_resume() const noexcept {
     }
@@ -158,7 +158,7 @@ struct group_awaitable_t final {
         return dispatch_group_wait(group, DISPATCH_TIME_NOW) == 0;
     }
     /// @see dispatch_group_notify_f
-    void await_suspend(coroutine_handle<void> coro) const noexcept {
+    void await_suspend(coro::coroutine_handle<void> coro) const noexcept {
         return dispatch_group_notify_f(group, queue, coro.address(), resume_once);
     }
     constexpr dispatch_group_t await_resume() const noexcept {
@@ -191,7 +191,7 @@ class group_action_t final {
         promise_type& operator=(const promise_type&) = delete;
         promise_type& operator=(promise_type&&) = delete;
 
-        suspend_always initial_suspend() noexcept {
+        std::experimental::suspend_always initial_suspend() noexcept {
             dispatch_group_enter(group);
             return {};
         }
@@ -209,7 +209,7 @@ class group_action_t final {
     };
 
   private:
-    coroutine_handle<promise_type> coro;
+    coro::coroutine_handle<promise_type> coro;
     dispatch_group_t const group;
 
   public:
@@ -218,7 +218,7 @@ class group_action_t final {
     * @see run_on
     */
     group_action_t(promise_type& p, dispatch_group_t group) noexcept
-        : coro{coroutine_handle<promise_type>::from_promise(p)}, group{group} {
+        : coro{coro::coroutine_handle<promise_type>::from_promise(p)}, group{group} {
     }
     group_action_t(const group_action_t&) = delete;
     group_action_t(group_action_t&&) noexcept = default;
@@ -296,7 +296,7 @@ struct resume_after_t final {
         return duration.count() == 0;
     }
     /// @see dispatch_after_f
-    void await_suspend(coroutine_handle<void> coro) noexcept {
+    void await_suspend(coro::coroutine_handle<void> coro) noexcept {
         const dispatch_time_t timepoint = dispatch_time(DISPATCH_TIME_NOW, duration.count());
         dispatch_after_f(timepoint, queue, coro.address(), resume_once);
     }

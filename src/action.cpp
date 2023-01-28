@@ -11,21 +11,21 @@ void sink_exception(std::exception_ptr&& exp) noexcept(false) {
 }
 
 void resume_once(void* ptr) noexcept {
-    auto task = coroutine_handle<void>::from_address(ptr);
+    auto task = coro::coroutine_handle<void>::from_address(ptr);
     if (task.done())
-        return; // spdlog::warn("final-suspended coroutine_handle"); // probably because of the logic error
+        return; // spdlog::warn("final-suspended coro::coroutine_handle"); // probably because of the logic error
     task.resume();
 }
 
-coroutine_handle<void> end_awaitable_t::await_suspend(coroutine_handle<void>) noexcept {
+coro::coroutine_handle<void> end_awaitable_t::await_suspend(coro::coroutine_handle<void>) noexcept {
     return handle;
 }
 
-void paused_action_t::promise_type::set_next(coroutine_handle<void> task) noexcept {
+void paused_action_t::promise_type::set_next(coro::coroutine_handle<void> task) noexcept {
     next = task;
 }
 
-paused_action_t::paused_action_t(promise_type& p) noexcept : coro{coroutine_handle<promise_type>::from_promise(p)} {
+paused_action_t::paused_action_t(promise_type& p) noexcept : coro{coro::coroutine_handle<promise_type>::from_promise(p)} {
 }
 
 paused_action_t::~paused_action_t() noexcept {
@@ -42,12 +42,12 @@ paused_action_t& paused_action_t::operator=(paused_action_t&& rhs) noexcept {
     return *this;
 }
 
-coroutine_handle<void> paused_action_t::handle() const noexcept {
+coro::coroutine_handle<void> paused_action_t::handle() const noexcept {
     return coro;
 }
 
-coroutine_handle<void>
-paused_action_t::chained_awaitable_t::await_suspend(coroutine_handle<promise_type> coro) noexcept {
+coro::coroutine_handle<void>
+paused_action_t::chained_awaitable_t::await_suspend(coro::coroutine_handle<promise_type> coro) noexcept {
     action.promise().set_next(coro); // save the task so it can be continued
     return action;
 }
@@ -58,7 +58,7 @@ suspend_never waitable_action_t::promise_type::initial_suspend() noexcept {
     return {};
 }
 
-suspend_always waitable_action_t::promise_type::final_suspend() noexcept {
+std::experimental::suspend_always waitable_action_t::promise_type::final_suspend() noexcept {
     if (proxy.release)
         proxy.release(proxy.context);
     return {};
@@ -72,7 +72,7 @@ waitable_action_t::waitable_action_t(promise_type* p) noexcept : p{p} {
 }
 
 waitable_action_t::~waitable_action_t() noexcept {
-    auto coro = coroutine_handle<promise_type>::from_promise(*p);
+    auto coro = coro::coroutine_handle<promise_type>::from_promise(*p);
     coro.destroy();
 }
 

@@ -14,10 +14,10 @@ using namespace std;
 class promise_manual_control {
   public:
     auto initial_suspend() {
-        return suspend_always{}; // suspend after invoke
+        return std::experimental::suspend_always{}; // suspend after invoke
     }
     auto final_suspend() noexcept {
-        return suspend_always{}; // suspend after return
+        return std::experimental::suspend_always{}; // suspend after return
     }
     void unhandled_exception() {
         // this example never 'throw'. so nothing to do
@@ -25,7 +25,7 @@ class promise_manual_control {
 };
 
 //  behavior will be defined as a coroutine
-class user_behavior_t : public coroutine_handle<void> {
+class user_behavior_t : public coro::coroutine_handle<void> {
   public:
     class promise_type : public promise_manual_control {
       public:
@@ -37,9 +37,9 @@ class user_behavior_t : public coroutine_handle<void> {
     };
 
   private:
-    user_behavior_t(promise_type* p) : coroutine_handle<void>{} {
-        coroutine_handle<void>& self = *this;
-        self = coroutine_handle<promise_type>::from_promise(*p);
+    user_behavior_t(promise_type* p) : coro::coroutine_handle<void>{} {
+        coro::coroutine_handle<void>& self = *this;
+        self = coro::coroutine_handle<promise_type>::from_promise(*p);
     }
 
   public:
@@ -76,7 +76,7 @@ class trigger_t {
     bool await_ready() {
         return false;
     }
-    void await_suspend(coroutine_handle<void>) {
+    void await_suspend(coro::coroutine_handle<void>) {
     }
     bool await_resume() {
         return pull();
@@ -120,14 +120,14 @@ auto russian_roulette(revolver_t& revolver, gsl::span<user_behavior_t> users) {
 
     // cleanup the game on return
     auto on_finish = gsl::finally([users] {
-        for (coroutine_handle<void>& frame : users)
+        for (coro::coroutine_handle<void>& frame : users)
             frame.destroy();
     });
 
     // until there is a victim ...
     for (id = 0u; fired == false; id = (id + 1) % users.size()) {
         // continue the users' behavior in round-robin manner
-        coroutine_handle<void>& task = users[id];
+        coro::coroutine_handle<void>& task = users[id];
         if (task.done() == false)
             task.resume();
     }

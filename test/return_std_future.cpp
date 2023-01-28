@@ -10,7 +10,7 @@
 // !!! this undef will be ignored !!!
 #undef _RESUMABLE_FUNCTIONS_SUPPORTED
 // so if <future> comes before <coroutine/frame.h>,
-// _Future_awaiter will make a compiler error for `coroutine_handle`
+// _Future_awaiter will make a compiler error for `coro::coroutine_handle`
 #include <coroutine/return.h> // import <coroutine/frame.h>
 #include <future>
 #else
@@ -46,6 +46,6 @@ int main(int, char* []) {
 // test compatibility with old namespace
 namespace std::experimental {
 
-static_assert(sizeof(coroutine_handle<void>) == sizeof(void*));
+static_assert(sizeof(coro::coroutine_handle<void>) == sizeof(void*));
 
 } // namespace std::experimental

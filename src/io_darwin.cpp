@@ -14,7 +14,7 @@ namespace coro {
 
 kqueue_owner netkq{};
 
-using net_callback_t = void (*)(void* ctx, coroutine_handle<void> coro);
+using net_callback_t = void (*)(void* ctx, coro::coroutine_handle<void> coro);
 
 void poll_net_tasks(const timespec& wait_time, //
                     net_callback_t callback, void* ctx) noexcept(false) {
@@ -29,7 +29,7 @@ void poll_net_tasks(const timespec& wait_time, //
     }
 }
 
-void resume_net_task(void*, coroutine_handle<void> coro) noexcept(false) {
+void resume_net_task(void*, coro::coroutine_handle<void> coro) noexcept(false) {
     return coro.resume();
 }
 
@@ -77,7 +77,7 @@ auto send_to(uint64_t sd, const sockaddr_in6& remote, io_buffer_t buffer,
     return *reinterpret_cast<io_send_to*>(addressof(work));
 }
 
-void io_send_to::suspend(coroutine_handle<void> rh) noexcept(false) {
+void io_send_to::suspend(coro::coroutine_handle<void> rh) noexcept(false) {
     static_assert(sizeof(void*) <= sizeof(uint64_t));
     task = rh;
 
@@ -121,7 +121,7 @@ auto recv_from(uint64_t sd, sockaddr_in6& remote, io_buffer_t buffer,
     return *reinterpret_cast<io_recv_from*>(addressof(work));
 }
 
-void io_recv_from::suspend(coroutine_handle<void> rh) noexcept(false) {
+void io_recv_from::suspend(coro::coroutine_handle<void> rh) noexcept(false) {
     static_assert(sizeof(void*) <= sizeof(uint64_t));
 
     task = rh;
@@ -161,7 +161,7 @@ auto send_stream(uint64_t sd, io_buffer_t buffer, uint32_t flag,
     return *reinterpret_cast<io_send*>(addressof(work));
 }
 
-void io_send::suspend(coroutine_handle<void> rh) noexcept(false) {
+void io_send::suspend(coro::coroutine_handle<void> rh) noexcept(false) {
     static_assert(sizeof(void*) <= sizeof(uint64_t));
     task = rh;
 
@@ -195,7 +195,7 @@ auto recv_stream(uint64_t sd, io_buffer_t buffer, uint32_t flag,
     return *reinterpret_cast<io_recv*>(addressof(work));
 }
 
-void io_recv::suspend(coroutine_handle<void> rh) noexcept(false) {
+void io_recv::suspend(coro::coroutine_handle<void> rh) noexcept(false) {
     static_assert(sizeof(void*) <= sizeof(uint64_t));
 
     task = rh;

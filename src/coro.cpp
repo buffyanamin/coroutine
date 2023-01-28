@@ -6,7 +6,7 @@
 
 namespace std::experimental {
 
-noop_coroutine_handle::coroutine_handle(coroutine_handle<void> handle) noexcept : coroutine_handle<void>{handle} {
+noop_coroutine_handle::coro::coroutine_handle(coro::coroutine_handle<void> handle) noexcept : coro::coroutine_handle<void>{handle} {
 }
 
 class noop_return_type final {
@@ -15,7 +15,7 @@ class noop_return_type final {
         constexpr suspend_never initial_suspend() noexcept {
             return {};
         }
-        constexpr suspend_always final_suspend() noexcept {
+        constexpr std::experimental::suspend_always final_suspend() noexcept {
             return {};
         }
         void unhandled_exception() noexcept {
@@ -32,10 +32,10 @@ class noop_return_type final {
     ~noop_return_type() noexcept;
 
   public:
-    coroutine_handle<void> handle;
+    coro::coroutine_handle<void> handle;
 };
 
-noop_return_type::noop_return_type(promise_type& p) noexcept : handle{coroutine_handle<promise_type>::from_promise(p)} {
+noop_return_type::noop_return_type(promise_type& p) noexcept : handle{coro::coroutine_handle<promise_type>::from_promise(p)} {
 }
 
 noop_return_type::~noop_return_type() noexcept {
@@ -44,7 +44,7 @@ noop_return_type::~noop_return_type() noexcept {
 
 static noop_return_type spawn_noop_coroutine() noexcept {
     while (true)
-        co_await suspend_always{};
+        co_await std::experimental::suspend_always{};
     co_return;
 }
 

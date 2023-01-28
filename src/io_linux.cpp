@@ -24,7 +24,7 @@ void poll_net_tasks(uint64_t nano) noexcept(false) {
         auto count = iep.wait(half_time.count(), {buf.get(), buf_sz});
         for (auto i = 0u; i < count; ++i)
             if (auto coro =
-                    coroutine_handle<void>::from_address(buf[i].data.ptr))
+                    coro::coroutine_handle<void>::from_address(buf[i].data.ptr))
                 coro.resume();
     }
     // resume outbound coroutines
@@ -32,7 +32,7 @@ void poll_net_tasks(uint64_t nano) noexcept(false) {
         auto count = oep.wait(half_time.count(), {buf.get(), buf_sz});
         for (auto i = 0u; i < count; ++i)
             if (auto coro =
-                    coroutine_handle<void>::from_address(buf[i].data.ptr))
+                    coro::coroutine_handle<void>::from_address(buf[i].data.ptr))
                 coro.resume();
     }
 }
@@ -68,7 +68,7 @@ auto send_to(uint64_t sd, const sockaddr_in6& remote, io_buffer_t buffer,
     return *reinterpret_cast<io_send_to*>(addressof(work));
 }
 
-void io_send_to::suspend(coroutine_handle<void> coro) noexcept(false) {
+void io_send_to::suspend(coro::coroutine_handle<void> coro) noexcept(false) {
     auto sd = this->handle;
     auto& errc = this->internal;
     errc = 0;
@@ -110,7 +110,7 @@ auto recv_from(uint64_t sd, sockaddr_in6& remote, io_buffer_t buffer,
     return *reinterpret_cast<io_recv_from*>(addressof(work));
 }
 
-void io_recv_from::suspend(coroutine_handle<void> coro) noexcept(false) {
+void io_recv_from::suspend(coro::coroutine_handle<void> coro) noexcept(false) {
     auto sd = this->handle;
     auto& errc = this->internal;
     errc = 0;
@@ -143,7 +143,7 @@ auto send_stream(uint64_t sd, io_buffer_t buffer, uint32_t flag,
     return *reinterpret_cast<io_send*>(addressof(work));
 }
 
-void io_send::suspend(coroutine_handle<void> coro) noexcept(false) {
+void io_send::suspend(coro::coroutine_handle<void> coro) noexcept(false) {
     auto sd = this->handle;
     auto& errc = this->internal;
     errc = 0;
@@ -174,7 +174,7 @@ auto recv_stream(uint64_t sd, io_buffer_t buffer, uint32_t flag,
     return *reinterpret_cast<io_recv*>(addressof(work));
 }
 
-void io_recv::suspend(coroutine_handle<void> coro) noexcept(false) {
+void io_recv::suspend(coro::coroutine_handle<void> coro) noexcept(false) {
     auto sd = this->handle;
     auto& errc = this->internal;
     errc = 0;

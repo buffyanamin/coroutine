@@ -77,7 +77,7 @@ int main(int, char*[]) {
         auto b = events.data();
         auto e = b + kq.events(timespec{.tv_sec = 1}, events);
         for_each(b, e, [&num_work](kevent64_s& event) {
-            auto coro = coroutine_handle<void>::from_address(
+            auto coro = coro::coroutine_handle<void>::from_address(
                 reinterpret_cast<void*>(event.udata));
             coro.resume();
             --num_work;

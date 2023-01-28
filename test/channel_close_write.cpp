@@ -27,7 +27,7 @@ int main(int, char*[]) {
     }
     assert(ch.get() == nullptr);
 
-    coroutine_handle<void>& coro = h;
+    coro::coroutine_handle<void>& coro = h;
     assert(coro.done()); // coroutine is in done state
     coro.destroy();      // destroy to prevent leak
 

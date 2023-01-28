@@ -8,15 +8,15 @@
 using namespace std;
 
 auto invoke_and_suspend_immediately() -> coro::frame_t {
-    co_await suspend_always{};
+    co_await std::experimental::suspend_always{};
     co_return;
 };
 
 int main(int, char*[]) {
     auto frame = invoke_and_suspend_immediately();
 
-    // coroutine_handle<void> is final_suspended after `co_return`.
-    coroutine_handle<void>& coro = frame;
+    // coro::coroutine_handle<void> is final_suspended after `co_return`.
+    coro::coroutine_handle<void>& coro = frame;
 
     assert(static_cast<bool>(coro)); // not null
     assert(coro.done() == false);    // it is susepended !

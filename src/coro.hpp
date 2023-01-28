@@ -16,15 +16,15 @@ namespace std::experimental {
 
 // STRUCT noop_coroutine_handle
 struct noop_coroutine_promise {};
-using noop_coroutine_handle = coroutine_handle<noop_coroutine_promise>;
+using noop_coroutine_handle = coro::coroutine_handle<noop_coroutine_promise>;
 
-// STRUCT coroutine_handle<noop_coroutine_promise>
+// STRUCT coro::coroutine_handle<noop_coroutine_promise>
 template <>
-struct coroutine_handle<noop_coroutine_promise> : public coroutine_handle<void> {
+struct coro::coroutine_handle<noop_coroutine_promise> : public coro::coroutine_handle<void> {
     friend noop_coroutine_handle noop_coroutine() noexcept;
 
   private:
-    explicit coroutine_handle(coroutine_handle<void> handle) noexcept;
+    explicit coro::coroutine_handle(coro::coroutine_handle<void> handle) noexcept;
 };
 
 // 17.12.4.3

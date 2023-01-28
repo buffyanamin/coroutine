@@ -17,13 +17,13 @@ auto save_current_handle_to_frame(int& status) -> frame_t {
     });
 
     status += 1;
-    co_await suspend_always{};
+    co_await std::experimental::suspend_always{};
     status += 1;
 }
 
 int main(int, char*[]) {
     int status = 0;
-    coroutine_handle<void> coro = save_current_handle_to_frame(status);
+    coro::coroutine_handle<void> coro = save_current_handle_to_frame(status);
     assert(status == 1);
     assert(coro.address() != nullptr);
     coro.resume();

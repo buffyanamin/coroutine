@@ -76,7 +76,7 @@ static_assert(sizeof(io_buffer_t) <= sizeof(void*) * 2);
  */
 class io_work_t : public io_control_block {
   public:
-    coroutine_handle<void> task{};
+    coro::coroutine_handle<void> task{};
     io_buffer_t buffer{};
 
   protected:
@@ -105,10 +105,10 @@ static_assert(sizeof(io_work_t) <= 56);
 class io_send_to final : public io_work_t {
   private:
     /**
-     * @brief makes an I/O request with given context(`coroutine_handle<void>`)
+     * @brief makes an I/O request with given context(`coro::coroutine_handle<void>`)
      * @throw std::system_error
      */
-    void suspend(coroutine_handle<void> t) noexcept(false);
+    void suspend(coro::coroutine_handle<void> t) noexcept(false);
     /**
      * @brief Fetch I/O result/error
      * @return int64_t return of `sendto`
@@ -125,7 +125,7 @@ class io_send_to final : public io_work_t {
     /**
      * @throw std::system_error
      */
-    void await_suspend(coroutine_handle<void> t) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> t) noexcept(false) {
         return this->suspend(t);
     }
     int64_t await_resume() noexcept {
@@ -143,10 +143,10 @@ static_assert(sizeof(io_send_to) == sizeof(io_work_t));
 class io_recv_from final : public io_work_t {
   private:
     /**
-     * @brief makes an I/O request with given context(`coroutine_handle<void>`)
+     * @brief makes an I/O request with given context(`coro::coroutine_handle<void>`)
      * @throw std::system_error
      */
-    void suspend(coroutine_handle<void> t) noexcept(false);
+    void suspend(coro::coroutine_handle<void> t) noexcept(false);
     /**
      * @brief Fetch I/O result/error
      * @return int64_t return of `recvfrom`
@@ -163,7 +163,7 @@ class io_recv_from final : public io_work_t {
     /**
      * @throw std::system_error
      */
-    void await_suspend(coroutine_handle<void> t) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> t) noexcept(false) {
         return this->suspend(t);
     }
     int64_t await_resume() noexcept {
@@ -181,10 +181,10 @@ static_assert(sizeof(io_recv_from) == sizeof(io_work_t));
 class io_send final : public io_work_t {
   private:
     /**
-     * @brief makes an I/O request with given context(`coroutine_handle<void>`)
+     * @brief makes an I/O request with given context(`coro::coroutine_handle<void>`)
      * @throw std::system_error
      */
-    void suspend(coroutine_handle<void> t) noexcept(false);
+    void suspend(coro::coroutine_handle<void> t) noexcept(false);
     /**
      * @brief Fetch I/O result/error
      * @return int64_t return of `send`
@@ -198,7 +198,7 @@ class io_send final : public io_work_t {
     bool await_ready() const noexcept {
         return this->ready();
     }
-    void await_suspend(coroutine_handle<void> t) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> t) noexcept(false) {
         return this->suspend(t);
     }
     int64_t await_resume() noexcept {
@@ -216,10 +216,10 @@ static_assert(sizeof(io_send) == sizeof(io_work_t));
 class io_recv final : public io_work_t {
   private:
     /**
-     * @brief makes an I/O request with given context(`coroutine_handle<void>`)
+     * @brief makes an I/O request with given context(`coro::coroutine_handle<void>`)
      * @throw std::system_error
      */
-    void suspend(coroutine_handle<void> t) noexcept(false);
+    void suspend(coro::coroutine_handle<void> t) noexcept(false);
 
     /**
      * @brief Fetch I/O result/error
@@ -234,7 +234,7 @@ class io_recv final : public io_work_t {
     bool await_ready() const noexcept {
         return this->ready();
     }
-    void await_suspend(coroutine_handle<void> t) noexcept(false) {
+    void await_suspend(coro::coroutine_handle<void> t) noexcept(false) {
         return this->suspend(t);
     }
     int64_t await_resume() noexcept {

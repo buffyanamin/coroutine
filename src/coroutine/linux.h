@@ -80,7 +80,7 @@ class epoll_owner final {
      * 
      * There is no guarantee of reusage of returned awaiter object
      * When it is awaited, and `req.udata` is null(0),
-     * the value is set to `coroutine_handle<void>`
+     * the value is set to `coro::coroutine_handle<void>`
      * 
      * ```cpp
      * auto edge_in_async(epoll_owner& ep, int64_t fd) -> frame_t {
@@ -92,7 +92,7 @@ class epoll_owner final {
      * ```
      */
     [[nodiscard]] auto submit(int64_t fd, epoll_event& req) noexcept {
-        class awaiter final : public suspend_always {
+        class awaiter final : public std::experimental::suspend_always {
             epoll_owner& ep;
             int64_t fd;
             epoll_event& req;
@@ -103,7 +103,7 @@ class epoll_owner final {
             }
 
           public:
-            void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+            void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
                 if (req.data.ptr == nullptr)
                     req.data.ptr = coro.address();
                 return ep.try_add(fd, req);
@@ -169,7 +169,7 @@ auto wait_in(epoll_owner& ep, event& efd) {
         /**
          * @brief Wait for `write` to given `eventfd`
          */
-        void await_suspend(coroutine_handle<void> coro) noexcept(false) {
+        void await_suspend(coro::coroutine_handle<void> coro) noexcept(false) {
             this->data.ptr = coro.address();
             return ep.try_add(efd.fd(), *this);
         }

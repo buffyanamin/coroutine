@@ -109,8 +109,6 @@ if(WITH_GCD) # libdispatch
     target_link_libraries(coro_gcd17 PRIVATE ${DISPATCH_LIBPATH} ${BLOCKS_RUNTIME_LIBPATH} coro_cpp17 coro_action17 spdlog::spdlog)
 endif()
 
-return()
-
 string(TOLOWER ${CMAKE_SYSTEM_NAME} system_name)
 
 list(APPEND headers
@@ -164,7 +162,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES Clang)
         PUBLIC
             # force feature activation.
             # see https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Frontend/InitPreprocessor.cpp
-            __cpp_impl_coroutine=201902L 
+            __cpp_impl_coroutine=201902L
             # make <yvals_core.h> define __cpp_lib_coroutine
             # see https://github.com/microsoft/STL, issue 1730, 2510
             _DOWNLEVEL_COROUTINES_SUPPORTED
@@ -267,7 +265,7 @@ write_basic_package_version_file(${VERSION_FILE_PATH}
     VERSION             ${PROJECT_VERSION}
     COMPATIBILITY       SameMajorVersion
 )
-install(FILES           ${VERSION_FILE_PATH} 
+install(FILES           ${VERSION_FILE_PATH}
         DESTINATION     ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME} # share/coroutine
 )
 
@@ -279,7 +277,7 @@ if(NOT BUILD_TESTING)
     return()
 endif()
 enable_testing()
-find_package(Catch2 2.13 CONFIG REQUIRED) # Catch2::Catch2
+find_package(Catch2 CONFIG REQUIRED) # Catch2::Catch2
 
 # create a test exe with the given name ...
 add_executable(coroutine_test_suite
@@ -309,7 +307,7 @@ endif()
 
 add_test(NAME test_exception COMMAND coroutine_test_suite "[exception]")
 
-# create_ctest( article_russian_roulette  coroutine_portable )
+create_ctest( article_russian_roulette  coroutine_portable )
 
 #
 #   <coroutine/yield.hpp>
